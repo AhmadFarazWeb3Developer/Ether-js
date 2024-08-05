@@ -1,0 +1,16 @@
+
+const getDetails = async () => {
+  const block = await provider.getBlock(); //
+  const blockNo = await provider.getBlockNumber();
+  
+  const balance = await provider.getBalance(walletAddress);
+  
+  // converting to ethers formate from big number object
+  console.log("Block No: ", blockNo);
+  console.log(ethers.version);
+  const etherBalance = ethers.formatEther(balance);
+  console.log("Account Balance : ", etherBalance);
+  };
+  
+  getDetails();
+  */
