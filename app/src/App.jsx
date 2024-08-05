@@ -1,6 +1,5 @@
 import "./App.css";
-import from "./Components/readBlockchain.js"
-import from "./Components/readBlockchain.js"
+
 const App = () => {
   return (
     <>
