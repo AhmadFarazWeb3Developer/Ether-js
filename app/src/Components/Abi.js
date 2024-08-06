@@ -1,20 +1,26 @@
-const Abi = [
+export const Abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_value",
-        type: "uint256",
+        internalType: "address payable",
+        name: "_toAddress",
+        type: "address",
       },
     ],
-    name: "setValue",
+    name: "transferEther",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "value",
+    inputs: [
+      {
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+    ],
+    name: "getEthers",
     outputs: [
       {
         internalType: "uint256",
@@ -26,5 +32,3 @@ const Abi = [
     type: "function",
   },
 ];
-
-export { Abi };

@@ -1,41 +1,127 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
-import { contractAddress } from "./contractAddress";
-import { Abi } from "./Abi";
-// for write operation signer is required
+import { contractAddress } from "./contractAddress"; // Make sure you are using the correct path
+import { Abi } from "./Abi"; // Make sure you are using the correct path
 
 const WriteBlockchain = () => {
-  const [getValue, setValue] = useState("0");
+  // --------This first two useStates are for ether and Address from User to sender
+  const [amount, setAmount] = useState("0");
+  const [address, setAddress] = useState("0");
+  const [connectedWallet, setConnectedWallet] = useState("Connect Wallet");
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletProvider, setWalletProvider] = useState(null);
 
-  useEffect(() => {
-    const MetaMaskConnection = async () => {
-      if (!window.ethereum) {
-        try {
-          const walletProvider = new ethers.BrowserProvider(window.ethereum);
-          await walletProvider.send("eth_requestAccounts", []);
-          const signer = await walletProvider.getSigner();
-          const contract = new ethers.Contract(contractAddress, Abi, signer);
+  const connectWallet = async () => {
+    if (window.ethereum) {
+      try {
+        // Request permission to connect the wallet
+        await window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [
+            {
+              eth_accounts: {},
+            },
+          ],
+        });
+        // Request Wallet Address
+        const walletAddresses = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
 
-          // Set value
-          const tx = await contract.setValue(12);
-          await tx.wait(); // Wait for transaction to be mined
+        if (walletAddresses.length > 0) {
+          const walletAddress = walletAddresses[0];
+          setConnectedWallet(walletAddress);
 
-          // Get updated value
-          const newValue = await contract.value();
-          setValue(newValue.toString());
-        } catch (error) {
-          alert(error);
+          // This is the wallet provider which will allow access to funcds of the wallet
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          setWalletProvider(provider);
+
+          const balance = await provider.getBalance(walletAddress);
+          setWalletBalance(ethers.formatEther(balance));
+          console.log("Wallet connected:", provider);
         }
-      } else {
-        alert("MetaMask is not installed.");
+      } catch (error) {
+        console.error("Error connecting to wallet:", error);
       }
-    };
-    MetaMaskConnection();
-  }, []);
+    } else {
+      alert("MetaMask is not installed.");
+    }
+  };
 
+  const sendAmount = async () => {
+    if (!walletProvider || !address || !amount) {
+      alert("Please connect your wallet and enter a valid address and amount.");
+      return;
+    }
+
+    try {
+      // Get the signer from the wallet provider
+      const signer = await walletProvider.getSigner();
+      console.log(signer);
+      // Create a new contract instance with the signer
+      const contract = new ethers.Contract(contractAddress, Abi, signer);
+      console.log(contract);
+
+      const amountInWei = ethers.parseEther(amount);
+
+      const gasLimit = await contract.transferEther.estimateGas(address, {
+        value: amountInWei,
+      });
+
+      console.log("Estimated gas limit:", gasLimit.toString());
+
+      const tx = await contract.transferEther(address, {
+        value: amountInWei,
+        gasLimit: gasLimit,
+      });
+
+      await tx.wait();
+
+      console.log("Transaction successful:", tx);
+    } catch (error) {
+      console.error("Error sending transaction:", error);
+      if (error.code === "CALL_EXCEPTION") {
+        console.error("Transaction reverted. Reason:", error.reason);
+      }
+    }
+  };
   return (
     <div>
-      <h1>{getValue}</h1>
+      <button className="wallet-btn" onClick={connectWallet}>
+        {connectedWallet === "Connect Wallet"
+          ? connectedWallet
+          : `Connected: ${connectedWallet}`}
+      </button>
+      {connectedWallet !== "Connect Wallet" && (
+        <div className="balance-box">
+          <h6>Account Balance: {walletBalance} ETH</h6>
+        </div>
+      )}
+      <div className="box">
+        <div className="sub-box">
+          <label htmlFor="addresss">Enter Address</label>
+          <input
+            type="text"
+            id="address"
+            placeholder="Address"
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+
+        <div className="sub-box">
+          <label htmlFor="amount">Enter Ethers</label>
+          <input
+            type="text"
+            id="amount"
+            placeholder="Ethers"
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+
+        <button className="transfer-btn" onClick={sendAmount}>
+          Transfer
+        </button>
+      </div>
     </div>
   );
 };
