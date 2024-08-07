@@ -48,6 +48,8 @@ const WriteBlockchain = () => {
     }
   };
 
+  //
+
   const sendAmount = async () => {
     if (!walletProvider || !address || !amount) {
       alert("Please connect your wallet and enter a valid address and amount.");
@@ -55,29 +57,29 @@ const WriteBlockchain = () => {
     }
 
     try {
-      // Get the signer from the wallet provider
       const signer = await walletProvider.getSigner();
-      console.log(signer);
-      // Create a new contract instance with the signer
       const contract = new ethers.Contract(contractAddress, Abi, signer);
-      console.log(contract);
-
       const amountInWei = ethers.parseEther(amount);
 
+      // Get the current gas price
+      const gasPrice = await walletProvider.send("eth_gasPrice", []);
+      console.log("Gas Price : ", gasPrice);
+
+      // Call the transferEther function on the contract for gas estimation
       const gasLimit = await contract.transferEther.estimateGas(address, {
         value: amountInWei,
       });
 
-      console.log("Estimated gas limit:", gasLimit.toString());
+      console.log("Gas Limit : ", gasLimit);
+      // Send the transaction
 
       const tx = await contract.transferEther(address, {
         value: amountInWei,
         gasLimit: gasLimit,
+        gasPrice: gasPrice,
       });
 
-      await tx.wait();
-
-      console.log("Transaction successful:", tx);
+      console.log("Transaction sent:", tx.hash);
     } catch (error) {
       console.error("Error sending transaction:", error);
       if (error.code === "CALL_EXCEPTION") {
@@ -85,6 +87,7 @@ const WriteBlockchain = () => {
       }
     }
   };
+
   return (
     <div>
       <button className="wallet-btn" onClick={connectWallet}>

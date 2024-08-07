@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { Abi } from "./Abi.js";
-import { InfuraProvider } from "./InfuraProvider.js";
+// import { InfuraProvider } from "./InfuraProvider.js";
 // step 2
 import { contractAddress } from "./contractAddress.js";
 
