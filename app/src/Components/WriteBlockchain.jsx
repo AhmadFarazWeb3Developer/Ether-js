@@ -31,8 +31,8 @@ const WriteBlockchain = () => {
         if (walletAddresses.length > 0) {
           const walletAddress = walletAddresses[0];
           setConnectedWallet(walletAddress);
-
           // This is the wallet provider which will allow access to funcds of the wallet
+
           const provider = new ethers.BrowserProvider(window.ethereum);
           setWalletProvider(provider);
 
