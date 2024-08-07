@@ -2,28 +2,39 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.hero-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100vh;
 }
 .box {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 100%;
-  height: 100vh;
+  width: 40%;
+  height: 60%;
   position: relative;
+  border: 1px solid rgb(220, 87, 82);
+
+  border-radius: 12px;
 }
 .sub-box {
   display: flex;
   flex-direction: column;
-  width: 25%;
+  width: 60%;
   height: auto;
   margin: 10px 0px;
 }
-h1 {
-  text-align: center;
-  color: blueviolet;
+h6 {
+  margin: 20px 0px;
   font-size: 16px;
-  margin-bottom: 100px;
+  color: rgb(220, 87, 82);
 }
 label {
   font-size: 16px;
@@ -37,8 +48,8 @@ input {
   cursor: text;
 }
 .transfer-btn {
-  margin: 60px 0px;
-  width: 12.5%;
+  margin: 40px 0px;
+  width: 30%;
   padding: 8px 10px;
   background: rgb(220, 87, 82);
   color: white;
@@ -48,7 +59,7 @@ input {
 }
 .wallet-btn {
   width: auto;
-  padding: 8px 16px;
+  padding: 8px 50px;
   background: blueviolet;
   color: white;
   border-radius: 4px;
@@ -66,4 +77,38 @@ input {
   float: right;
   margin-top: 22px;
   font-size: 16px;
+}
+
+.read-box {
+  width: 40%;
+  padding: 10px;
+  height: 60%;
+  border: 1px solid rgb(108, 53, 160);
+  border-radius: 12px;
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  flex-direction: column;
+}
+.read-sub-box {
+  /* border: 1px solid blueviolet; */
+  margin: 10px 0px;
+  padding: 10px 0px;
+}
+.read-sub-box label {
+  color: blueviolet;
+  font-size: 16px;
+  margin: 20px 0px;
+}
+
+.read-box p {
+  font-size: 18px;
+  letter-spacing: 1px;
+  margin: 5px 0px;
+}
+
+.feeds {
+  background-color: rgb(193, 151, 232);
+  padding: 5px;
+  margin-top: 5px;
 }
